@@ -40,9 +40,9 @@ static size_t handle_get_info(uint8_t *response, size_t max_len) {
         return 1;
     }
 
-    // 7 key-value pairs:
-    // 1: versions, 2: extensions, 3: aaguid, 4: options, 5: maxMsgSize, 6: pinProtocols, 10: algorithms
-    cbor_encode_map(&enc, 7);
+    // 8 key-value pairs:
+    // 1: versions, 2: extensions, 3: aaguid, 4: options, 5: maxMsgSize, 6: pinProtocols, 9: transports, 10: algorithms
+    cbor_encode_map(&enc, 8);
 
     // 1: versions = ["FIDO_2_1", "FIDO_2_0", "U2F_V2"]
     cbor_encode_uint(&enc, 1);
@@ -83,6 +83,11 @@ static size_t handle_get_info(uint8_t *response, size_t max_len) {
     cbor_encode_uint(&enc, 3);
     cbor_encode_uint(&enc, 2);
     cbor_encode_uint(&enc, 1);
+
+    // 9: transports = ["usb"]
+    cbor_encode_uint(&enc, 9);
+    cbor_encode_array(&enc, 1);
+    cbor_encode_text(&enc, "usb");
 
     // 10: algorithms = [-50, -20, -36, -7]
     cbor_encode_uint(&enc, 10);
