@@ -12,6 +12,21 @@
 #include "ctap_engine.h"
 #include "fido_hid.h"
 #include "hardware/clocks.h"
+#include "pico/stdio/driver.h"
+
+static void cdc_out_chars(const char *buf, int len) {
+    if (tud_cdc_connected()) {
+        tud_cdc_write(buf, len);
+        tud_cdc_write_flush();
+    }
+}
+
+static stdio_driver_t cdc_stdio_driver = {
+    .out_chars = cdc_out_chars,
+#if PICO_STDIO_ENABLE_CRLF_SUPPORT
+    .crlf_enabled = true,
+#endif
+};
 
 static void print_banner(void) {
     printf("\n================================================================\n");
@@ -62,6 +77,8 @@ int main(void) {
 
     board_init();
     tusb_init();
+
+    stdio_set_driver_enabled(&cdc_stdio_driver, true);
 
     status_led_init();
     user_presence_init();

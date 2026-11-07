@@ -84,23 +84,16 @@ bool user_presence_wait(uint32_t timeout_ms, bool (*keepalive_cb)(void)) {
     uint32_t start_ms = to_ms_since_boot(get_absolute_time());
     uint32_t last_keepalive_ms = start_ms;
 
-    // Flush any existing button press before waiting
-    while (user_presence_is_button_pressed()) {
-        tud_task();
-        sleep_ms(10);
-    }
-
     while (to_ms_since_boot(get_absolute_time()) - start_ms < timeout_ms) {
         tud_task();
-        status_led_update();
         uint32_t now = to_ms_since_boot(get_absolute_time());
 
         if (user_presence_is_button_pressed()) {
             uint32_t press_start = now;
-            // Wait for release or debounce
+            // Wait for release or debounce (hold > 2s triggers bootloader)
             while (user_presence_is_button_pressed()) {
                 tud_task();
-                sleep_ms(10);
+                sleep_ms(5);
                 if (to_ms_since_boot(get_absolute_time()) - press_start > 2000) {
                     user_presence_reboot_to_bootloader();
                 }
@@ -118,7 +111,7 @@ bool user_presence_wait(uint32_t timeout_ms, bool (*keepalive_cb)(void)) {
             }
         }
 
-        sleep_ms(20);
+        sleep_ms(2);
     }
 
     status_led_set_mode(LED_MODE_ERROR);

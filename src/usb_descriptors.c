@@ -84,7 +84,7 @@ uint8_t const desc_configuration[] = {
                              EPNUM_HID, 0x80 | EPNUM_HID, 64, 5),
 
     // Interface 1 & 2: CDC Serial
-    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC, 5, EPNUM_CDC_NOTIF, 8, EPNUM_CDC_DATA, 0x80 | EPNUM_CDC_DATA, 64)
+    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC, 5, 0x80 | EPNUM_CDC_NOTIF, 8, EPNUM_CDC_DATA, 0x80 | EPNUM_CDC_DATA, 64)
 };
 
 uint8_t const * tud_descriptor_configuration_cb(uint8_t index) {
