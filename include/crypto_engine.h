@@ -46,6 +46,7 @@ bool crypto_aes256_cbc_decrypt(const uint8_t key[32], const uint8_t iv[16],
 
 // ML-DSA-87 (PQC Signature)
 bool crypto_mldsa87_keypair(uint8_t *public_key, uint8_t *secret_key);
+bool crypto_mldsa87_keypair_derand(uint8_t *public_key, uint8_t *secret_key, const uint8_t seed[32]);
 bool crypto_mldsa87_sign(uint8_t *signature, size_t *sig_len,
                          const uint8_t *msg, size_t msg_len,
                          const uint8_t *secret_key);

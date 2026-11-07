@@ -3,17 +3,24 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-UF2_FILE="$PROJECT_DIR/build/rp2040_fido2_pqc.uf2"
+BUILD_DIR="$PROJECT_DIR/build"
+UF2_FILE="$BUILD_DIR/rp2040_fido2_pqc.uf2"
+
+echo "================================================================"
+echo " Building and Flashing RP2040 PQC FIDO2 Authenticator"
+echo "================================================================"
+
+# Always build first to ensure latest binary
+if [ -d "$BUILD_DIR" ]; then
+    echo "Compiling latest firmware changes..."
+    make -C "$BUILD_DIR" -j4
+fi
 
 if [ ! -f "$UF2_FILE" ]; then
     echo "Error: UF2 file not found at $UF2_FILE"
     echo "Please build the project first."
     exit 1
 fi
-
-echo "================================================================"
-echo " Flashing RP2040 PQC FIDO2 Authenticator"
-echo "================================================================"
 
 # If RPI-RP2 is not already mounted, trigger automatic reboot to BOOTSEL
 if ! mountpoint -q "/media/$USER/RPI-RP2" 2>/dev/null && ! mountpoint -q "/run/media/$USER/RPI-RP2" 2>/dev/null; then

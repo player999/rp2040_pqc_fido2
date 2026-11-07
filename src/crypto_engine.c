@@ -105,6 +105,15 @@ bool crypto_aes256_cbc_decrypt(const uint8_t key[32], const uint8_t iv[16],
 }
 
 // ML-DSA-87
+extern int PQCP_MLDSA_NATIVE_MLDSA87_C_keypair_internal(uint8_t *pk, uint8_t *sk, const uint8_t *seed);
+
+bool crypto_mldsa87_keypair_derand(uint8_t *public_key, uint8_t *secret_key, const uint8_t seed[32]) {
+    status_led_set_mode(LED_MODE_PQC_ACTIVE);
+    int rc = PQCP_MLDSA_NATIVE_MLDSA87_C_keypair_internal(public_key, secret_key, seed);
+    status_led_set_mode(LED_MODE_IDLE);
+    return (rc == 0);
+}
+
 bool crypto_mldsa87_keypair(uint8_t *public_key, uint8_t *secret_key) {
     if (!s_sig_mldsa87) return false;
     status_led_set_mode(LED_MODE_PQC_ACTIVE);

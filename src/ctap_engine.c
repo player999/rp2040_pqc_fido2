@@ -300,7 +300,7 @@ static size_t handle_make_credential(const uint8_t *payload, size_t len,
             return 1;
         }
 
-        if (!crypto_mldsa87_keypair(mldsa_pk, mldsa_sk)) {
+        if (!crypto_mldsa87_keypair_derand(mldsa_pk, mldsa_sk, cred_seed)) {
             free(cose_key_buf);
             free(mldsa_pk);
             free(mldsa_sk);
@@ -582,10 +582,10 @@ static size_t handle_get_assertion(const uint8_t *payload, size_t len,
 
     if (cred_alg == COSE_ALG_ML_DSA_87 || cred_alg == COSE_ALG_ML_DSA_87_COMPAT) {
         printf("[CTAP2] Signing assertion with ML-DSA-87...\n");
-        // Re-generate secret key from seed or use keypair
+        // Re-generate secret key deterministically from unwrapped seed
         uint8_t *pk = malloc(MLDSA87_PUBLIC_KEY_SIZE);
         uint8_t *sk = malloc(MLDSA87_SECRET_KEY_SIZE);
-        if (pk && sk && crypto_mldsa87_keypair(pk, sk)) {
+        if (pk && sk && crypto_mldsa87_keypair_derand(pk, sk, key_data)) {
             crypto_mldsa87_sign(sig_buf, &sig_len, to_sign, sizeof(to_sign), sk);
         }
         if (pk) free(pk);
