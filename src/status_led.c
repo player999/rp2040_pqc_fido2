@@ -16,7 +16,8 @@ static inline void put_pixel(uint32_t pixel_grb) {
 }
 
 static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b) {
-    return ((uint32_t)(g) << 16) | ((uint32_t)(r) << 8) | (uint32_t)(b);
+    // Waveshare RP2040-One miniature RGB LED expects RGB order (not GRB)
+    return ((uint32_t)(r) << 16) | ((uint32_t)(g) << 8) | (uint32_t)(b);
 }
 
 void status_led_set_color(uint8_t r, uint8_t g, uint8_t b) {
