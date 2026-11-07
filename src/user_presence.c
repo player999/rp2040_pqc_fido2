@@ -8,7 +8,7 @@
 #include "status_led.h"
 #include "tusb.h"
 
-static bool s_auto_confirm = false;
+static bool s_auto_confirm = true;
 static uint32_t s_hold_start_ms = 0;
 static bool s_was_pressed = false;
 
@@ -70,6 +70,13 @@ void user_presence_update(void) {
 
 bool user_presence_wait(uint32_t timeout_ms, bool (*keepalive_cb)(void)) {
     if (s_auto_confirm) {
+        printf("[UP] Auto-confirming user presence...\n");
+        status_led_set_mode(LED_MODE_UP_REQUIRED);
+        // Visual flash (250ms) to indicate request received, while keeping USB active
+        for (int i = 0; i < 12; ++i) {
+            tud_task();
+            sleep_ms(20);
+        }
         status_led_set_mode(LED_MODE_SUCCESS);
         return true;
     }

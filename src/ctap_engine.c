@@ -90,31 +90,31 @@ static size_t handle_get_info(uint8_t *response, size_t max_len) {
 
     // Alg -50 (ML-DSA-87 / RFC 9964)
     cbor_encode_map(&enc, 2);
-    cbor_encode_text(&enc, "type");
-    cbor_encode_text(&enc, "public-key");
     cbor_encode_text(&enc, "alg");
     cbor_encode_int(&enc, COSE_ALG_ML_DSA_87);
+    cbor_encode_text(&enc, "type");
+    cbor_encode_text(&enc, "public-key");
 
     // Alg -20 (ML-DSA-87 / SandboxAQ compatibility)
     cbor_encode_map(&enc, 2);
-    cbor_encode_text(&enc, "type");
-    cbor_encode_text(&enc, "public-key");
     cbor_encode_text(&enc, "alg");
     cbor_encode_int(&enc, COSE_ALG_ML_DSA_87_COMPAT);
+    cbor_encode_text(&enc, "type");
+    cbor_encode_text(&enc, "public-key");
 
     // Alg -36 (ECDSA secp521r1 / ES512)
     cbor_encode_map(&enc, 2);
-    cbor_encode_text(&enc, "type");
-    cbor_encode_text(&enc, "public-key");
     cbor_encode_text(&enc, "alg");
     cbor_encode_int(&enc, COSE_ALG_ES512);
+    cbor_encode_text(&enc, "type");
+    cbor_encode_text(&enc, "public-key");
 
     // Alg -7 (ECDSA secp256r1 / ES256)
     cbor_encode_map(&enc, 2);
-    cbor_encode_text(&enc, "type");
-    cbor_encode_text(&enc, "public-key");
     cbor_encode_text(&enc, "alg");
     cbor_encode_int(&enc, COSE_ALG_ES256);
+    cbor_encode_text(&enc, "type");
+    cbor_encode_text(&enc, "public-key");
 
     return 1 + cbor_encoder_size(&enc);
 }
