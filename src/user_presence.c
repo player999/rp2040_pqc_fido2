@@ -8,7 +8,9 @@
 #include "status_led.h"
 #include "tusb.h"
 
+#ifdef ENABLE_AUTO_CONFIRM
 static bool s_auto_confirm = false;
+#endif
 static uint32_t s_hold_start_ms = 0;
 static bool s_was_pressed = false;
 
@@ -40,6 +42,7 @@ void user_presence_init(void) {
     s_was_pressed = false;
 }
 
+#ifdef ENABLE_AUTO_CONFIRM
 void user_presence_set_auto_confirm(bool enable) {
     s_auto_confirm = enable;
 }
@@ -47,6 +50,7 @@ void user_presence_set_auto_confirm(bool enable) {
 bool user_presence_get_auto_confirm(void) {
     return s_auto_confirm;
 }
+#endif
 
 void user_presence_update(void) {
     bool pressed = user_presence_is_button_pressed();
@@ -69,6 +73,7 @@ void user_presence_update(void) {
 }
 
 bool user_presence_wait(uint32_t timeout_ms, bool (*keepalive_cb)(void)) {
+#ifdef ENABLE_AUTO_CONFIRM
     if (s_auto_confirm) {
         printf("[UP] Auto-confirming user presence...\n");
         status_led_set_mode(LED_MODE_UP_REQUIRED);
@@ -79,6 +84,7 @@ bool user_presence_wait(uint32_t timeout_ms, bool (*keepalive_cb)(void)) {
         }
         return true;
     }
+#endif
 
     status_led_set_mode(LED_MODE_UP_REQUIRED);
     uint32_t start_ms = to_ms_since_boot(get_absolute_time());

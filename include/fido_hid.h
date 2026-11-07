@@ -20,7 +20,9 @@
 // Vendor Command to reboot into BOOTSEL mode
 #define CTAPHID_CMD_VENDOR_REBOOT1   0xD1  // 0x80 | 0x51
 #define CTAPHID_CMD_VENDOR_REBOOT2   0xF0  // 0x80 | 0x70
+#ifdef ENABLE_AUTO_CONFIRM
 #define CTAPHID_CMD_VENDOR_AUTO_UP   0xD2  // Toggle User Presence auto-confirm for testing
+#endif
 
 #define CTAPHID_ERR_INVALID_CMD     0x01
 #define CTAPHID_ERR_INVALID_PAR     0x02

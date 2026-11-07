@@ -145,6 +145,7 @@ static void dispatch_ctaphid_message(uint32_t cid, uint8_t cmd, const uint8_t *p
         user_presence_reboot_to_bootloader();
     }
 
+#ifdef ENABLE_AUTO_CONFIRM
     if (cmd == CTAPHID_CMD_VENDOR_AUTO_UP) {
         bool cur = user_presence_get_auto_confirm();
         bool new_val = (len > 0) ? (payload[0] != 0) : !cur;
@@ -159,6 +160,7 @@ static void dispatch_ctaphid_message(uint32_t cid, uint8_t cmd, const uint8_t *p
         send_next_tx_packet();
         return;
     }
+#endif
 
     if (cmd == CTAPHID_CMD_PING) {
         printf("[CTAPHID] PING (len=%zu)\n", len);

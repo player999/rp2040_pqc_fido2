@@ -55,17 +55,21 @@ static void process_cdc_commands(void) {
             printf("\nConsole command 'b': Rebooting to BOOTSEL mode...\n");
             tud_cdc_write_flush();
             user_presence_reboot_to_bootloader();
+#ifdef ENABLE_AUTO_CONFIRM
         } else if (ch == 't' || ch == 'T') {
             bool current = user_presence_get_auto_confirm();
             user_presence_set_auto_confirm(!current);
             printf("\n[CONFIG] User Presence Auto-Confirm: %s\n", !current ? "ENABLED" : "DISABLED");
+#endif
         } else if (ch == 'i' || ch == 'I') {
             print_banner();
         } else if (ch == 'h' || ch == '?') {
             printf("\nAvailable Commands:\n");
             printf("  b - Reboot to USB BOOTSEL mode\n");
+#ifdef ENABLE_AUTO_CONFIRM
             printf("  t - Toggle User Presence Auto-Confirm (current: %s)\n",
                    user_presence_get_auto_confirm() ? "ON" : "OFF");
+#endif
             printf("  i - Show system info banner\n");
         }
     }
