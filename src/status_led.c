@@ -54,12 +54,11 @@ void status_led_update(void) {
             break;
 
         case LED_MODE_IDLE: {
-            // Calm gentle pulsing cyan/deep blue (period ~1.8s)
+            // Calm deep sapphire blue with ZERO green (period ~1.8s)
             uint32_t phase = (step % 60);
             uint8_t val = (phase < 30) ? (phase * 2) : ((60 - phase) * 2);
-            uint8_t g = (val / 3) + 2;
-            uint8_t b = val + 5;
-            status_led_set_color(0, g, b);
+            // Pure blue: r=0, g=0, b=8..38 (absolutely zero green light)
+            status_led_set_color(0, 0, 8 + (val / 2));
             break;
         }
 
@@ -86,18 +85,29 @@ void status_led_update(void) {
         }
 
         case LED_MODE_SUCCESS:
-            // Vivid emerald green confirmation flash
-            status_led_set_color(0, 240, 25);
-            if (step > 20) { // ~600ms
+            // Emerald green confirmation: solid for ~750ms, then fades out over ~300ms (total ~1s)
+            if (step < 25) {
+                status_led_set_color(0, 220, 0);
+            } else if (step < 35) {
+                uint8_t g = (uint8_t)((35 - step) * 22);
+                status_led_set_color(0, g, 0);
+            } else {
+                // Green completely turns off, returning to calm pure blue idle
                 current_mode = LED_MODE_IDLE;
+                step = 0;
             }
             break;
 
         case LED_MODE_ERROR:
-            // Bright crimson red flash
-            status_led_set_color(255, 0, 0);
-            if (step > 20) {
+            // Red warning flash: solid for ~750ms, then fades out
+            if (step < 25) {
+                status_led_set_color(240, 0, 0);
+            } else if (step < 35) {
+                uint8_t r = (uint8_t)((35 - step) * 24);
+                status_led_set_color(r, 0, 0);
+            } else {
                 current_mode = LED_MODE_IDLE;
+                step = 0;
             }
             break;
 
