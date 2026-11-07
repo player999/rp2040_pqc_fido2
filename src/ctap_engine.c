@@ -289,6 +289,7 @@ static size_t handle_make_credential(const uint8_t *payload, size_t len,
     uint8_t p256_priv[P256_COORD_SIZE];
 
     if (chosen_alg == COSE_ALG_ML_DSA_87 || chosen_alg == COSE_ALG_ML_DSA_87_COMPAT) {
+        status_led_set_mode(LED_MODE_PQC_ACTIVE);
         printf("[CTAP2] Generating ML-DSA-87 keypair...\n");
         uint8_t *mldsa_pk = malloc(MLDSA87_PUBLIC_KEY_SIZE);
         mldsa_sk = malloc(MLDSA87_SECRET_KEY_SIZE);
@@ -433,6 +434,7 @@ static size_t handle_make_credential(const uint8_t *payload, size_t len,
     cbor_encode_bytes(&resp_enc, sig_buf, sig_len);
     free(sig_buf);
 
+    status_led_set_mode(LED_MODE_SUCCESS);
     printf("[CTAP2] MakeCredential success! Total response size: %zu bytes\n", 1 + cbor_encoder_size(&resp_enc));
     return 1 + cbor_encoder_size(&resp_enc);
 }
@@ -581,6 +583,7 @@ static size_t handle_get_assertion(const uint8_t *payload, size_t len,
     size_t sig_len = 0;
 
     if (cred_alg == COSE_ALG_ML_DSA_87 || cred_alg == COSE_ALG_ML_DSA_87_COMPAT) {
+        status_led_set_mode(LED_MODE_PQC_ACTIVE);
         printf("[CTAP2] Signing assertion with ML-DSA-87...\n");
         // Re-generate secret key deterministically from unwrapped seed
         uint8_t *pk = malloc(MLDSA87_PUBLIC_KEY_SIZE);
@@ -626,6 +629,7 @@ static size_t handle_get_assertion(const uint8_t *payload, size_t len,
     cbor_encode_bytes(&resp_enc, sig_buf, sig_len);
     free(sig_buf);
 
+    status_led_set_mode(LED_MODE_SUCCESS);
     printf("[CTAP2] GetAssertion success! Response size: %zu bytes\n", 1 + cbor_encoder_size(&resp_enc));
     return 1 + cbor_encoder_size(&resp_enc);
 }

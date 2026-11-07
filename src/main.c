@@ -11,11 +11,12 @@
 #include "storage.h"
 #include "ctap_engine.h"
 #include "fido_hid.h"
+#include "hardware/clocks.h"
 
 static void print_banner(void) {
     printf("\n================================================================\n");
     printf("   RP2040 Post-Quantum & Classical FIDO2 Authenticator\n");
-    printf("   Target: Waveshare RP2040-One (Cortex-M0+ @ 133MHz)\n");
+    printf("   Target: Waveshare RP2040-One (Cortex-M0+ boosted @ 200MHz)\n");
     printf("================================================================\n");
     printf("Algorithms Supported:\n");
     printf("  [PQC] ML-DSA-87 (FIPS 204 / Dilithium-5) - COSE alg -50 & -20\n");
@@ -56,6 +57,9 @@ static void process_cdc_commands(void) {
 }
 
 int main(void) {
+    // Boost RP2040 system clock to 200 MHz for ~1.5x faster PQC calculations
+    set_sys_clock_khz(200000, false);
+
     board_init();
     tusb_init();
 

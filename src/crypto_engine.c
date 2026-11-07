@@ -110,7 +110,6 @@ extern int PQCP_MLDSA_NATIVE_MLDSA87_C_keypair_internal(uint8_t *pk, uint8_t *sk
 bool crypto_mldsa87_keypair_derand(uint8_t *public_key, uint8_t *secret_key, const uint8_t seed[32]) {
     status_led_set_mode(LED_MODE_PQC_ACTIVE);
     int rc = PQCP_MLDSA_NATIVE_MLDSA87_C_keypair_internal(public_key, secret_key, seed);
-    status_led_set_mode(LED_MODE_IDLE);
     return (rc == 0);
 }
 
@@ -118,7 +117,6 @@ bool crypto_mldsa87_keypair(uint8_t *public_key, uint8_t *secret_key) {
     if (!s_sig_mldsa87) return false;
     status_led_set_mode(LED_MODE_PQC_ACTIVE);
     OQS_STATUS rc = OQS_SIG_keypair(s_sig_mldsa87, public_key, secret_key);
-    status_led_set_mode(LED_MODE_IDLE);
     return (rc == OQS_SUCCESS);
 }
 
@@ -128,7 +126,6 @@ bool crypto_mldsa87_sign(uint8_t *signature, size_t *sig_len,
     if (!s_sig_mldsa87) return false;
     status_led_set_mode(LED_MODE_PQC_ACTIVE);
     OQS_STATUS rc = OQS_SIG_sign(s_sig_mldsa87, signature, sig_len, msg, msg_len, secret_key);
-    status_led_set_mode(LED_MODE_IDLE);
     return (rc == OQS_SUCCESS);
 }
 
@@ -145,7 +142,6 @@ bool crypto_mlkem1024_keypair(uint8_t *public_key, uint8_t *secret_key) {
     if (!s_kem_mlkem1024) return false;
     status_led_set_mode(LED_MODE_PQC_ACTIVE);
     OQS_STATUS rc = OQS_KEM_keypair(s_kem_mlkem1024, public_key, secret_key);
-    status_led_set_mode(LED_MODE_IDLE);
     return (rc == OQS_SUCCESS);
 }
 
@@ -154,7 +150,6 @@ bool crypto_mlkem1024_encaps(uint8_t *ciphertext, uint8_t *shared_secret,
     if (!s_kem_mlkem1024) return false;
     status_led_set_mode(LED_MODE_PQC_ACTIVE);
     OQS_STATUS rc = OQS_KEM_encaps(s_kem_mlkem1024, ciphertext, shared_secret, public_key);
-    status_led_set_mode(LED_MODE_IDLE);
     return (rc == OQS_SUCCESS);
 }
 
@@ -164,7 +159,6 @@ bool crypto_mlkem1024_decaps(uint8_t *shared_secret,
     if (!s_kem_mlkem1024) return false;
     status_led_set_mode(LED_MODE_PQC_ACTIVE);
     OQS_STATUS rc = OQS_KEM_decaps(s_kem_mlkem1024, shared_secret, ciphertext, secret_key);
-    status_led_set_mode(LED_MODE_IDLE);
     return (rc == OQS_SUCCESS);
 }
 
