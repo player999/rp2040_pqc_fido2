@@ -8,7 +8,7 @@
 #include "status_led.h"
 #include "tusb.h"
 
-static bool s_auto_confirm = true;
+static bool s_auto_confirm = false;
 static uint32_t s_hold_start_ms = 0;
 static bool s_was_pressed = false;
 
@@ -105,7 +105,7 @@ bool user_presence_wait(uint32_t timeout_ms, bool (*keepalive_cb)(void)) {
                     user_presence_reboot_to_bootloader();
                 }
             }
-            status_led_set_mode(LED_MODE_SUCCESS);
+            printf("[UP] Button pressed! User Presence confirmed.\n");
             return true;
         }
 

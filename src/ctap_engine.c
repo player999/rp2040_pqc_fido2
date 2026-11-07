@@ -7,6 +7,7 @@
 #include "storage.h"
 #include "user_presence.h"
 #include "status_led.h"
+#include "fido_hid.h"
 
 // Ephemeral KEM / ECDH agreement state
 static uint8_t s_ephem_mlkem_sk[MLKEM1024_SECRET_KEY_SIZE];
@@ -258,7 +259,7 @@ static size_t handle_make_credential(const uint8_t *payload, size_t len,
            (int)rp_id_len, rp_id, (long)chosen_alg, resident_key);
 
     // Wait for User Presence (UP touch)
-    if (!user_presence_wait(30000, NULL)) {
+    if (!user_presence_wait(30000, fido_hid_send_keepalive_up)) {
         printf("[CTAP2] UP timeout or denied\n");
         response[0] = CTAP2_ERR_USER_ACTION_TIMEOUT;
         return 1;
@@ -559,7 +560,7 @@ static size_t handle_get_assertion(const uint8_t *payload, size_t len,
     printf("[CTAP2] Credential matched! Algorithm: %ld\n", (long)cred_alg);
 
     // Wait for User Presence (UP touch)
-    if (!user_presence_wait(30000, NULL)) {
+    if (!user_presence_wait(30000, fido_hid_send_keepalive_up)) {
         response[0] = CTAP2_ERR_USER_ACTION_TIMEOUT;
         return 1;
     }
@@ -719,7 +720,7 @@ static size_t handle_client_pin(const uint8_t *payload, size_t len,
 // ----------------------------------------------------------------------------
 static size_t handle_reset(uint8_t *response, size_t max_len) {
     printf("[CTAP2] authenticatorReset\n");
-    if (!user_presence_wait(10000, NULL)) {
+    if (!user_presence_wait(10000, fido_hid_send_keepalive_up)) {
         response[0] = CTAP2_ERR_USER_ACTION_TIMEOUT;
         return 1;
     }

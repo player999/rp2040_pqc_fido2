@@ -23,6 +23,28 @@ static uint8_t s_tx_seq = 0;
 static bool s_tx_active = false;
 
 static uint32_t s_next_cid = 0x01020304;
+static uint32_t s_current_cbor_cid = 0;
+static volatile bool s_cancelled = false;
+
+bool fido_hid_send_keepalive_up(void) {
+    if (s_cancelled) {
+        return false;
+    }
+    if (s_current_cbor_cid != 0 && tud_hid_ready()) {
+        uint8_t packet[CTAPHID_PACKET_SIZE];
+        memset(packet, 0, sizeof(packet));
+        packet[0] = (uint8_t)(s_current_cbor_cid >> 24);
+        packet[1] = (uint8_t)(s_current_cbor_cid >> 16);
+        packet[2] = (uint8_t)(s_current_cbor_cid >> 8);
+        packet[3] = (uint8_t)(s_current_cbor_cid);
+        packet[4] = CTAPHID_CMD_KEEPALIVE;
+        packet[5] = 0;
+        packet[6] = 1; // 1 byte payload
+        packet[7] = 0x02; // CTAPHID_KEEPALIVE_STATUS_UPNEEDED
+        tud_hid_report(0, packet, sizeof(packet));
+    }
+    return true;
+}
 
 void fido_hid_init(void) {
     s_rx_active = false;
@@ -164,7 +186,10 @@ static void dispatch_ctaphid_message(uint32_t cid, uint8_t cmd, const uint8_t *p
 
     if (cmd == CTAPHID_CMD_CBOR) {
         printf("[CTAPHID] CBOR request (len=%zu)\n", len);
+        s_current_cbor_cid = cid;
+        s_cancelled = false;
         size_t resp_len = ctap_engine_process_command(payload, len, s_tx_buf, sizeof(s_tx_buf));
+        s_current_cbor_cid = 0;
         s_tx_cid = cid;
         s_tx_cmd = CTAPHID_CMD_CBOR;
         s_tx_total_len = resp_len;
@@ -178,6 +203,7 @@ static void dispatch_ctaphid_message(uint32_t cid, uint8_t cmd, const uint8_t *p
         printf("[CTAPHID] CANCEL\n");
         s_rx_active = false;
         s_tx_active = false;
+        s_cancelled = true;
         return;
     }
 

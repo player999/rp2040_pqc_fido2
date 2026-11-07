@@ -35,3 +35,4 @@
 void fido_hid_init(void);
 void fido_hid_task(void);
 void fido_hid_receive_packet(const uint8_t *packet, size_t len);
+bool fido_hid_send_keepalive_up(void);
