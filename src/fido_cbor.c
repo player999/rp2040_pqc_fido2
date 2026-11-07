@@ -139,10 +139,11 @@ bool cbor_encode_p521_cose_key(CborEncoder *enc, int64_t alg, const uint8_t *x, 
            cbor_encode_int(enc, -3) && cbor_encode_bytes(enc, y, y_len);   // -3: y (66B)
 }
 
-// ML-DSA-87 COSE Key: kty=5 (AKP/LWE), alg=-50 (or -20), -1: pubkey (2592B)
+// ML-DSA-87 COSE Key: kty=7 (AKP / RFC 9964), alg=-50 (or -20), -1: pubkey (2592B)
 bool cbor_encode_mldsa87_cose_key(CborEncoder *enc, int64_t alg, const uint8_t *pubkey, size_t pubkey_len) {
+    int64_t kty = (alg == -20) ? 5 : 7; // 7 for standard RFC 9964 (webauthn.io), 5 for legacy SandboxAQ
     return cbor_encode_map(enc, 3) &&
-           cbor_encode_int(enc, 1) && cbor_encode_int(enc, 5) &&    // 1: kty = 5 (AKP)
+           cbor_encode_int(enc, 1) && cbor_encode_int(enc, kty) &&    // 1: kty = 7 (AKP) or 5
            cbor_encode_int(enc, 3) && cbor_encode_int(enc, alg) &&  // 3: alg = -50 or -20
            cbor_encode_int(enc, -1) && cbor_encode_bytes(enc, pubkey, pubkey_len); // -1: pubkey (2592 bytes)
 }
